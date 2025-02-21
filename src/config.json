@@ -10,5 +10,12 @@
     "colors": {
         "embed": "#2f3136"
     },
+    "moderation": {
+        "moderatorRoleName": "Facilitator"
+    },
+    "threads": {
+        "4weeksGroupThread": "1342397956308865055",
+        "16weeksGroupThread": "1342397956308865055"
+    },
     "restVersion": "10"
 }

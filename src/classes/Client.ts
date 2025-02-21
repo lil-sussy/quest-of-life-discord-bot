@@ -18,6 +18,7 @@ import {
     Interaction,
     ModalSubmit,
 } from "../interfaces";
+import { command as setupCommand } from '../commands/setupGroup';
 
 // TypeScript or JavaScript environment (thanks to https://github.com/stijnvdkolk)
 let tsNodeRun = false;
@@ -139,6 +140,9 @@ export default class ExtendedClient extends Client {
                     },
                 ),
             );
+
+        // Add this line to register the new command
+        this.commands.set(setupCommand.data.name, setupCommand);
     }
     /**
      * Deploy Application Commands to Discord

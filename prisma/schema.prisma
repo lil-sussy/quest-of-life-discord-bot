@@ -10,15 +10,17 @@ datasource db {
 model User {
   id         String   @id @default(uuid())
   discordId  String   @unique
-  group      Group?   @relation(fields: [groupId], references: [id])
-  groupId    String?  @unique
+  inGroups     Group[]  @relation("GroupMembers")
+  facilitatedGroups Group[] @relation("GroupFacilitator")
 }
 
 model Group {
   id           String         @id @default(uuid())
   type         GroupType
   sessions     DateTime[]
-  members      User[]
+  members      User[]         @relation("GroupMembers")
+  facilitator  User?          @relation("GroupFacilitator", fields: [facilitatorId], references: [id])
+  facilitatorId String?
 }
 
 enum GroupType {
