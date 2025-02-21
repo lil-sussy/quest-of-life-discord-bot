@@ -15,8 +15,10 @@ try {
         tsNodeRun = true;
     }
 }
-catch (e) {
-/* empty */
+catch (e:unknown) {
+    if (e instanceof Error) {
+        console.error(e.message);
+    }
 }
 
 const options:ShardingManagerOptions = {
