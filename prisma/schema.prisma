@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  discordId  String   @unique
+  group      Group?   @relation(fields: [groupId], references: [id])
+  groupId    String?  @unique
+}
+
+model Group {
+  id           String         @id @default(uuid())
+  type         GroupType
+  sessions     DateTime[]
+  members      User[]
+}
+
+enum GroupType {
+  FOUR_WEEKS
+  SIXTEEN_WEEKS
+} 
