@@ -10,7 +10,7 @@ export const createInviteInteraction = async (interaction: ChatInputCommandInter
 
   if (participants.length > 0) {
     const selectMenu = new StringSelectMenuBuilder()
-      .setCustomId(`inviteGroupFollowup_${group.id}`)
+      .setCustomId(`inviteGroupFollowup`)
       .setPlaceholder('Select members to add to the group, if one is not visible, you can add them later')
       .setMinValues(1)
       .setMaxValues(participants.length)
