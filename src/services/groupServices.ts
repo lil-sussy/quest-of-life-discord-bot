@@ -13,7 +13,7 @@ export async function createGroup(group: Group) {
   const facilitator = await findOrCreateUser(group.facilitatorId);
   const existingGroup = await prisma.group.findFirst({
     where: {
-      facilitatorId: group.facilitatorId,
+      name: group.name,
     },
   });
 
@@ -23,6 +23,7 @@ export async function createGroup(group: Group) {
 
 	return await prisma.group.create({
 		data: {
+      name: group.name,
 			type: group.type,
 			sessions: [group.firstSession],
 			members: {
