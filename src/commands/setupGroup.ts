@@ -1,12 +1,13 @@
-import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder, ThreadChannel, ActionRowBuilder, StringSelectMenuBuilder } from 'discord.js';
 import config from '../config.json';
 import { GroupType } from '@prisma/client';
 import { Command } from "../interfaces/Command";
 import ExtendedClient from '../classes/Client';
 import { createGroup } from '../services/groupServices';
+import { createInviteInteraction } from '../features/createInviteInteraction';
 
-export const command: Command = {
-    global: true,
+const command: Command = {
+    global: false,
     options: new SlashCommandBuilder()
         .setName('setup')
         .setDescription('Setup a new support group')
@@ -36,7 +37,7 @@ export const command: Command = {
         }
 
         // Check if thread belongs to configured forums
-        const parentId = interaction.channel?.parentId;
+        const parentId = (interaction.channel as ThreadChannel).parentId;
         const validForums = [config.threads["4weeksGroupThread"], config.threads["16weeksGroupThread"]];
         if (!parentId || !validForums.includes(parentId)) {
             interaction.reply({
@@ -59,6 +60,7 @@ export const command: Command = {
 
         try {
             // Create group in database
+            interaction.deferReply({ ephemeral: true });
             const group = await createGroup({
                 name: interaction.options.getString('group_name', true),
                 facilitatorId: interaction.options.getUser('facilitator', true).id,
@@ -66,17 +68,16 @@ export const command: Command = {
                 firstSession: new Date(interaction.options.getString('first_session', true)),
             });
 
-            await interaction.reply({
-                content: `✅ Group **${interaction.options.getString('group_name', true)}** setup successfully!`,
-                ephemeral: true
-            });
+            // Get recent thread participants (last 100 messages)
+            const messages = await interaction.channel.messages.fetch({ limit: 100 });
+            await createInviteInteraction(interaction, messages, group);
 
         } catch (error) {
             console.error('Group setup error:', error);
-            await interaction.reply({
+            await interaction.editReply({
                 content: `❌ Failed to setup group. Please check the input format and try again.\n\n \`\`\`${error}\`\`\``,
-                ephemeral: true
             });
         }
     }
 };
+export default command;
